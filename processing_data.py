@@ -28,39 +28,54 @@ def interface(prompt):
     return response
   
 def inferance_gemini(prompt):
+  print("Generating response using Gemini 2.5...")
   api_key="AIzaSyA7V-N_-T3Q7x_sw6s2weLUHfXOIm1YUr4"
   genai.configure(api_key=api_key)
   model=genai.GenerativeModel("gemini-2.5-flash")
   response=model.generate_content(prompt)
   return response.text
 
+while True:
+  df = joblib.load("embeddings.joblib", mmap_mode=None)
+  input_query=input("enter your query:")
+  query_embedding=create_embeddings([input_query])[0]
+  similarity=cosine_similarity(np.vstack(df['embeddings']),[query_embedding]).flatten()
+  top_results=5
+  max_index=similarity.argsort()[::-1][0:top_results]
+  newdf=df.loc[max_index]
+  prompt = f"""
+  You are an assistant for an online Python course.
+  You have access to the following video chunks with metadata:
+  [Video Data]
+  {newdf[["number","name","start","end","text"]].to_json(orient="records")}
+  [Instruction]
+  - If the user query matches content in the videos:
+    • Tell them which video number and name.  
+    • Give exact start–end timestamps.  
+    • Summarize what is taught in that segment.  
+    • Mention how much content (duration = end - start) is covered.  
+  - If the query is unrelated to the course, reply strictly with:  
+    "I can only answer course-related questions."  
+  - Do not ask any questions back to the user. Just give the answer.  
 
-df = joblib.load("embeddings.joblib", mmap_mode=None)
-input_query=input("enter your query:")
-query_embedding=create_embeddings([input_query])[0]
-similarity=cosine_similarity(np.vstack(df['embeddings']),[query_embedding]).flatten()
-top_results=5
-max_index=similarity.argsort()[::-1][0:top_results]
-newdf=df.loc[max_index]
-prompt = f"""
-You are an assistant for an online Python course.
-You have access to the following video chunks with metadata:
-[Video Data]
-{newdf[["number","name","start","end","text"]].to_json(orient="records")}
-[Instruction]
-- If the user query matches content in the videos:
-  • Tell them which video number and name.  
-  • Give exact start–end timestamps.  
-  • Summarize what is taught in that segment.  
-  • Mention how much content (duration = end - start) is covered.  
-- If the query is unrelated to the course, reply strictly with:  
-  "I can only answer course-related questions."  
-- Do not ask any questions back to the user. Just give the answer.  
+  [User Query]
+  {input_query}
 
-[User Query]
-{input_query}
-
-[Answer]
-"""
-answer=inferance_gemini(prompt)
-print(answer)
+  [Answer]
+  """
+  answer=inferance_gemini(prompt)
+  print(answer)
+  choice=input("do you want to save this response? (yes/no):")
+  if choice.lower()=='yes':
+    file_name=input("enter the file name(in which you want to save response):")
+    if os.path.exists(f"{file_name}.txt"):
+      print("file already exists, please choose a different name.")
+    else:
+      with open(f"{file_name}.txt","w") as f:
+          f.write(f"Query: {input_query}\n")
+          f.write(f"Response: {answer}\n")
+      print(f"Response saved to {file_name}.txt")
+  breaking=input("do you want to continue? (yes/no):") 
+  if breaking.lower()=='no':
+      break   
+      

@@ -5,9 +5,6 @@ import numpy as np
 import joblib
 import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
-os.environ["GOOGLE_API_KEY"] = "AIzaSyA7V-N_-T3Q7x_sw6s2weLUHfXOIm1YUr4"
-genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-
 def create_embeddings(text_file):
     r=requests.post("http://localhost:11434/api/embed",json=
     {
@@ -29,18 +26,15 @@ def interface(prompt):
     r = requests.post(url, json=payload)
     response = r.json()['response']
     return response
-
+  
 def inferance_gemini(prompt):
-  response = genai.generate(
-      model="gemini-1.5-turbo",
-      prompt=prompt,
-      temperature=0.2,
-      max_output_tokens=512
-    )
-  
-  return response.output_text
-  
-      
+  api_key="AIzaSyA7V-N_-T3Q7x_sw6s2weLUHfXOIm1YUr4"
+  genai.configure(api_key=api_key)
+  model=genai.GenerativeModel("gemini-2.5-flash")
+  response=model.generate_content(prompt)
+  return response.text
+
+
 df = joblib.load("embeddings.joblib", mmap_mode=None)
 input_query=input("enter your query:")
 query_embedding=create_embeddings([input_query])[0]
@@ -53,7 +47,6 @@ You are an assistant for an online Python course.
 You have access to the following video chunks with metadata:
 [Video Data]
 {newdf[["number","name","start","end","text"]].to_json(orient="records")}
-
 [Instruction]
 - If the user query matches content in the videos:
   • Tell them which video number and name.  
@@ -69,5 +62,5 @@ You have access to the following video chunks with metadata:
 
 [Answer]
 """
-answer=interface(prompt)
+answer=inferance_gemini(prompt)
 print(answer)

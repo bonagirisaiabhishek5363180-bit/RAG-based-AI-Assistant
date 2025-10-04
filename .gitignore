@@ -1,0 +1,23 @@
+# Ignore audio/video files
+*.mp3
+*.mp4
+
+# Ignore data/json  and joblib outputs
+*.json
+*.joblib
+# Python cache and temp files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+
+# VS Code settings
+.vscode/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+# Ignore videos and audios directories
+video/
+audios/

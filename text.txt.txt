@@ -1,0 +1,17 @@
+Query: where files input and output are taught
+Response: File input and output operations (file handling) are taught in:
+
+*   **Video Number:** 49
+*   **Video Name:** File IO in Python Python Tutorial
+    *   **Segment 1:**
+        *   **Timestamps:** 743.24 - 745.24
+        *   **Summary:** This segment explains how file handling is performed.
+        *   **Duration:** 2.0 seconds
+    *   **Segment 2:**
+        *   **Timestamps:** 458.24 - 460.24
+        *   **Summary:** This segment covers reading a file.
+        *   **Duration:** 2.0 seconds
+    *   **Segment 3:**
+        *   **Timestamps:** 466.24 - 467.24
+        *   **Summary:** This segment covers writing to a file.
+        *   **Duration:** 1.0 second

@@ -6,8 +6,9 @@ import joblib
 import os
 import google.generativeai as genai
 from sklearn.metrics.pairwise import cosine_similarity
-
-
+from dotenv import load_dotenv
+dotenv_path=r"D:\Desktop\Desktop\Data_science_course\Rag Based project\RAG BASED PROJECT\.env"
+load_dotenv(dotenv_path)
 
 
 def create_embeddings(text_file):
@@ -32,8 +33,9 @@ def interface(prompt):
     response = r.json()['response']
     return response
 def inferance_gemini(prompt):
-    print("Generating response using models/gemma-3-27b-it...")
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+    print("Generating response using gemma-3-27b-it...")
+    # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+    genai.configure(api_key="AIzaSyApG6L29MbtwYHGNVM9S_u6hrtjzwVIIag")
     model = genai.GenerativeModel("models/gemma-3-27b-it")
     response = model.generate_content(prompt)
     return response.text

@@ -33,7 +33,7 @@ def interface(prompt):
     response = r.json()['response']
     return response
 def inferance_gemini(prompt):
-    print("Generating response using gemma-3-27b-it...")
+    print("Generating response using models/gemma-3-27b-it...")
     genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
     model = genai.GenerativeModel("models/gemma-3-27b-it")
     response = model.generate_content(prompt)
